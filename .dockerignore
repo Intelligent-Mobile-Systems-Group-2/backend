@@ -1,0 +1,14 @@
+.git
+.ipynb_checkpoints
+rest_api/node_modules/
+**/Dockerfile
+Dockerfile
+.DS_Store
+.gitignore
+README.md
+env.*
+devops
+
+# To prevent storing dev/temporary container data
+*.csv
+tmp

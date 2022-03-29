@@ -1,0 +1,8 @@
+version: "3.8"
+services: 
+  web-backend:
+    build: ./rest_api/
+    ports: 
+      - 8080:8080
+    volumes: 
+      - ./rest_api:/rest_api
