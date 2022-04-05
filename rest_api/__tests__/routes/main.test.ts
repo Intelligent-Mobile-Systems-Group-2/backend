@@ -21,3 +21,21 @@ describe('POST /user', () => {
         .expect(200);
   });
 });
+
+
+describe('POST /image', () => {
+  it('should respond with a label & image', async () => {
+    const imageBase64 = 'base64EncodedImageData';
+    const label = 'It is a rock';
+    request(server)
+        .post('/user')
+        .send({
+          imageBase64,
+        })
+        .expect((res) => {
+          res.body.imageBase64 = imageBase64;
+          res.body.label = label;
+        })
+        .expect(200);
+  });
+});
