@@ -13,17 +13,17 @@ router.get('/', async (ctx, next) => {
 });
 
 app.use(koaCors({
-  origin: "*"
+  origin: '*',
 }));
 app.use(koaBody());
 app.use(router.routes());
 app.use(mainRouter.routes());
 const server = app
-  .listen(config.port, async () => {
-    console.log(`Listening on port ${config.port}`);
-  })
-  .on('error', error => {
-    console.error(error);
-});
+    .listen(config.port, async () => {
+      console.log(`Listening on port ${config.port}`);
+    })
+    .on('error', (error: any) => {
+      console.error(error);
+    });
 
 export default server;
