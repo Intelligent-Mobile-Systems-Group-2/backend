@@ -18,22 +18,22 @@ router.post('/user', async (ctx, next) => {
 
 // Currently not working
 router.post('/image', async (ctx, next) => {
-  const fileInput = ctx.request.files;
+  const fileInput = ctx.request.body.imageData;
 
   if (!fileInput) {
-    ctx.throw(400, 'no files were uploaded');
+    ctx.throw(400, 'image data missing');
   }
 
-  if (fileInput && fileInput[0]) {
-    const image = fileInput[0];
+  if (fileInput) {
+    const imageBase64 = Buffer.from(fileInput, 'base64')
 
     // Send image to Google Vision API
-    ctx.body = await getLabelsFromImage(image.toString());
+    ctx.body = await getLabelsFromImage(imageBase64);
   }
 });
 
 // Currently not working
-const getLabelsFromImage = async (imageBase64: string) => {
+const getLabelsFromImage = async (imageBase64: Buffer) => {
   const client = new GoogleVision.ImageAnnotatorClient();
   const [result] = await client.labelDetection(imageBase64);
   const labels = result.labelAnnotations;
