@@ -9,4 +9,6 @@ parserOptions:
   sourceType: module
 plugins:
   - '@typescript-eslint'
-rules: {}
+rules: 
+  linebreak-style: off
+  no-unused-vars: off
