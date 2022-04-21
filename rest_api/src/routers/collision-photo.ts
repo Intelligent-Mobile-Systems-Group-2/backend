@@ -16,8 +16,9 @@ router.post('/collision-photo', async (ctx) => {
   // Receive the objects within the image
   const [objects, error] = await getObjectsWithinImage(photo.path);
   if (objects) {
+    const object:any = objects[0]
     ctx.body = {
-      objects,
+      object,
     };
   } else if (error) {
     ctx.body = {
