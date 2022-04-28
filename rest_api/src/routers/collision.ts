@@ -49,6 +49,34 @@ router.post('/object-collision', async (ctx) => {
   }
 });
 
+router.get('/object-collision', async (ctx) => {
+  const date = ctx.request.query.date as any;
+  const objectCollisionLog = JSON.parse(fs.readFileSync(config.OBJECT_COLLISION_DB_PATH, {encoding: 'utf-8'}));
+
+  // Return data for all dates if date is unspecified
+  if (!date) {
+    ctx.body = objectCollisionLog;
+  } else if (!objectCollisionLog[date]) {
+    ctx.throw(400, 'There are no entries for that date');
+  } else {
+    ctx.body = objectCollisionLog[date];
+  }
+});
+
+router.get('/boundary-collision', async (ctx) => {
+  const date = ctx.request.query.date as any;
+  const objectCollisionLog = JSON.parse(fs.readFileSync(config.BOUNDARY_COLLISION_DB_PATH, {encoding: 'utf-8'}));
+
+  // Return data for all dates if date is unspecified
+  if (!date) {
+    ctx.body = objectCollisionLog;
+  } else if (!objectCollisionLog[date]) {
+    ctx.throw(400, 'There are no entries for that date');
+  } else {
+    ctx.body = objectCollisionLog[date];
+  }
+});
+
 /**
  *
  * Scans the inputted image for objects using the Google Vision API
