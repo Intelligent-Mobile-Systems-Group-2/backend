@@ -18,7 +18,7 @@ npm run test
 
 # REST API
 
-REST API request dokumentations for backend communication
+REST API request documentations for backend communication
 
 ## Server base URL
 
@@ -43,6 +43,42 @@ REST API request dokumentations for backend communication
     {
         object: "Dog"
     }
+    
+## GET request for object collisions at specific date 
+
+### Request
+
+`GET /boundary-collision/`
+
+### Example Body
+
+    {
+        "date": "4/28/2022"
+    }
+ 
+### Response
+
+    {
+        "time": "4:12:48 PM",
+        "x": "43.765",
+        "y": "23.845",
+        "object": "Dog"
+    }
+    
+## GET request for all object collisions
+
+### Request
+
+`GET /boundary-collision/`
+ 
+### Response
+
+    {
+        "time": "4:12:48 PM",
+        "x": "43.765",
+        "y": "23.845",
+        "object": "Dog"
+    }
 
 
 ## POST request for boundary collision
@@ -58,3 +94,37 @@ REST API request dokumentations for backend communication
         "y": "23.845"
     }
     
+
+## GET request for boundary collisions at specific date 
+
+### Request
+
+`GET /boundary-collision/`
+
+### Example Body
+
+    {
+        "date": "4/28/2022"
+    }
+    
+### Response
+
+    {
+        "time": "4:12:48 PM",
+        "x": "43.765",
+        "y": "23.845"
+    }
+    
+## GET request for all boundary collisions 
+
+### Request
+
+`GET /boundary-collision/`
+    
+### Response
+
+    {
+        "time": "4:12:48 PM",
+        "x": "43.765",
+        "y": "23.845"
+    }
