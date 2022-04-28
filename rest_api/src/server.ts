@@ -32,7 +32,11 @@ const server = app
     .listen(config.PORT, async () => {
       console.log(`Listening on port ${config.PORT}`);
     })
+<<<<<<< HEAD
+    .on('error', (error: any) => {
+=======
     .on('error', (error) => {
+>>>>>>> 945f003756f4c8d084aeea033ac4b7224711321d
       console.error(error);
     });
 
