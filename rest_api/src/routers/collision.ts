@@ -2,12 +2,32 @@
 /* eslint-disable quotes */
 import Router from '@koa/router';
 import GoogleVision from '@google-cloud/vision';
-import gm from 'gm';
+import fs from 'fs';
 import config from '../config';
 
 const router = new Router();
 
-router.post('/collision-photo', async (ctx) => {
+router.post('/boundary-collision', async (ctx) => {
+  const x = ctx.request.body.x;
+  const y = ctx.request.body.y;
+  if (!(x && y)) {
+    ctx.throw(400, 'Missing x or y fields');
+  }
+  logCollision(x, y, config.BOUNDARY_COLLISION_DB_PATH);
+  ctx.body = {
+    x,
+    y,
+  };
+  ctx.status = 200;
+});
+
+router.post('/object-collision', async (ctx) => {
+  const x = ctx.request.body.x;
+  const y = ctx.request.body.y;
+  if (!(x && y)) {
+    ctx.throw(400, 'Missing x or y fields');
+  }
+
   const photo = (ctx.request.files as any).photo;
   if (!photo) {
     ctx.throw(400, 'Missing photo field');
@@ -16,9 +36,11 @@ router.post('/collision-photo', async (ctx) => {
   // Receive the objects within the image
   const [objects, error] = await getObjectsWithinImage(photo.path);
   if (objects) {
-    const object:any = objects[0]
+    logCollision(x, y, config.OBJECT_COLLISION_DB_PATH, objects[0]);
+
+    ctx.status = 200;
     ctx.body = {
-      object,
+      object: objects[0],
     };
   } else if (error) {
     ctx.body = {
@@ -78,6 +100,40 @@ const getObjectsWithinImage = async (imagePath: string): Promise<[any | null, Er
     console.error(error);
     return [null, error as Error];
   }
+};
+
+/**
+ *
+ * Logs collision data to the specified document database json file
+ *
+ * @param {number} x x coordinate of the collision
+ * @param {number} y y coordinate of the collision
+ * @param {string} dbFilePath the path to the doc database
+ * @param {string} object optional name of the object collided with
+ * @return {undefined} returns undefined
+ */
+const logCollision = async (x: number, y: number, dbFilePath: string, object?: string) => {
+  const datetime = new Date().toLocaleString();
+  const date = datetime.slice(0, 9);
+  const time = datetime.slice(11, datetime.length);
+  const positionData = {
+    'time': time,
+    x,
+    y,
+    ...(object && {object}),
+  };
+
+  const coolisionCoordinates = JSON.parse(fs.readFileSync(dbFilePath, {encoding: 'utf-8'}));
+  if (!coolisionCoordinates[date as any]) {
+    coolisionCoordinates[date as any] = [];
+  }
+
+  coolisionCoordinates[date as any].push(positionData);
+
+  fs.writeFile(dbFilePath, JSON.stringify(coolisionCoordinates, null, 2), (err) => {
+    if (err) throw err;
+    console.log(`[${date}-${time}] Logged collision on ${x}, ${y}`);
+  });
 };
 
 export default router;

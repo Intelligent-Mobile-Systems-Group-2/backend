@@ -5,7 +5,7 @@ import Koa from 'koa';
 import koaBody from 'koa-body';
 import koaCors from '@koa/cors';
 import Router from '@koa/router';
-import collisionPhotoRouter from './routers/collision-photo';
+import collisionPhotoRouter from './routers/collision';
 import config from './config';
 
 const app = new Koa();
