@@ -48,7 +48,7 @@ REST API request documentations for backend communication
 
 ### Request
 
-`GET /boundary-collision/`
+`GET /object-collision/`
 
 ### Example Body
 
@@ -69,7 +69,7 @@ REST API request documentations for backend communication
 
 ### Request
 
-`GET /boundary-collision/`
+`GET /object-collision/`
  
 ### Response
 
