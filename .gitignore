@@ -1,3 +1,6 @@
+# db
+rest_api/db/
+
 # Logs
 logs
 *.log
