@@ -141,7 +141,7 @@ const getObjectsWithinImage = async (imagePath: string): Promise<[any | null, Er
  * @return {undefined} returns undefined
  */
 const logCollision = async (x: number, y: number, dbFilePath: string, object?: string) => {
-  const datetime = new Date().toLocaleString();
+  const datetime = new Date().toLocaleString('en-US');
   const date = datetime.slice(0, 9);
   const time = datetime.slice(11, datetime.length);
   const positionData = {
