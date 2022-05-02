@@ -22,7 +22,7 @@ REST API request documentations for backend communication
 
 ## Server base URL
 
-`http://localhost:8080/`
+`http://ims.matteobernardi.fr/`
 
 ## POST request for object collision
 
