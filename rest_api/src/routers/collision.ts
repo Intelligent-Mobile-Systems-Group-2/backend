@@ -1,7 +1,9 @@
+/* eslint-disable guard-for-in */
 /* eslint-disable max-len */
 /* eslint-disable quotes */
 import Router from '@koa/router';
 import GoogleVision from '@google-cloud/vision';
+import Jimp from 'jimp';
 import fs from 'fs';
 import config from '../config';
 
@@ -95,31 +97,32 @@ const getObjectsWithinImage = async (imagePath: string): Promise<[any | null, Er
   });
 
   try {
-    /* TODO: crop the image so only dominant object will be identified
-
-    const [result] = await client.cropHints(imagePath);
-    const cropHints = result.cropHintsAnnotation;
+    // crop the image so only dominant object will be identified
+    const [cropResult] = await client.cropHints(imagePath);
+    const cropHints = cropResult.cropHintsAnnotation;
     const bounds: Array<Array<number>> = [];
 
-    cropHints!.cropHints!.forEach((hintBounds, hintIdx) => {
-      console.log(`Crop Hint ${hintIdx}:`);
-
-      hintBounds!.boundingPoly!.vertices!.forEach((bound, boundIdx) => {
-        console.log(`Bound ${boundIdx}: (${bound.x}, ${bound.y})`);
-        if (bound.x && bound.y) {
-          bounds.push([bound.x, bound.y]);
-        }
-      });
-    });
+    // Get the bounding vertices of the crop hints
+    for (const hintBounds of cropHints!.cropHints!) {
+      for (const bound of hintBounds!.boundingPoly!.vertices!) {
+        bounds.push([bound.x!, bound.y!]);
+      }
+    }
 
     const width = Math.abs(bounds[0][1]-bounds[1][0]);
     const height = Math.abs(bounds[3][1]-bounds[0][1]);
 
-    gm(imagePath)
-        .crop(width, height, bounds[0][1], bounds[1][0])
-        .write('image.jpeg', (error, size) => {
-          console.log(error);
-        });*/
+    const datetime = new Date().toLocaleString('sv-SE');
+    const date = datetime.slice(0, 9);
+    const time = datetime.slice(11, datetime.length);
+
+    const x = bounds[0][0];
+    const y = bounds[0][1];
+
+    const image = await Jimp.read(imagePath);
+    image.crop(x, y, width, height);
+    image.quality(60);
+    image.write(`./collision-photos/${date}-${time}.jpg`);
 
     const [result] = await client.objectLocalization!(imagePath);
     const objectNames = result.localizedObjectAnnotations!.map((object) => object.name);
@@ -141,7 +144,7 @@ const getObjectsWithinImage = async (imagePath: string): Promise<[any | null, Er
  * @return {undefined} returns undefined
  */
 const logCollision = async (x: number, y: number, dbFilePath: string, object?: string) => {
-  const datetime = new Date().toLocaleString('en-US');
+  const datetime = new Date().toLocaleString('sv-SE');
   const date = datetime.slice(0, 9);
   const time = datetime.slice(11, datetime.length);
   const positionData = {
