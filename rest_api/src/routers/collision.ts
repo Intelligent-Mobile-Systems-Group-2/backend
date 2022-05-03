@@ -113,7 +113,7 @@ const getObjectsWithinImage = async (imagePath: string): Promise<[any | null, Er
     const height = Math.abs(bounds[3][1]-bounds[0][1]);
 
     const datetime = new Date().toLocaleString('sv-SE');
-    const date = datetime.slice(0, 9);
+    const date = datetime.slice(0, 10);
     const time = datetime.slice(11, datetime.length);
 
     const x = bounds[0][0];
@@ -145,7 +145,7 @@ const getObjectsWithinImage = async (imagePath: string): Promise<[any | null, Er
  */
 const logCollision = async (x: number, y: number, dbFilePath: string, object?: string) => {
   const datetime = new Date().toLocaleString('sv-SE');
-  const date = datetime.slice(0, 9);
+  const date = datetime.slice(0, 10);
   const time = datetime.slice(11, datetime.length);
   const positionData = {
     'time': time,
