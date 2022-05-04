@@ -20,7 +20,6 @@ app.use(koaCors({
 }));
 app.use(koaBody({
   multipart: true,
-  encoding: 'gzip',
   formidable: {
     keepExtensions: true,
     maxFileSize: 200*1024*1024,
