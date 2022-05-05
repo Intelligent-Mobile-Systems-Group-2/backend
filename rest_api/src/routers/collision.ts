@@ -37,17 +37,24 @@ router.post('/object-collision', async (ctx) => {
 
   // Receive the objects within the image
   const [objects, error] = await getObjectsWithinImage(photo.path);
-  if (objects) {
+  if (objects.length !== 0) {
     logCollision(x, y, config.OBJECT_COLLISION_DB_PATH, objects[0]);
 
-    ctx.status = 200;
+    ctx.status = 201;
     ctx.body = {
       object: objects[0],
     };
+    console.log(ctx.body);
   } else if (error) {
     ctx.body = {
       error: error.message,
     };
+    ctx.status = 500;
+  } else {
+      ctx.body = { 
+        error: "No object could be detected in the image." 
+    };
+    ctx.status = 200;
   }
 });
 
