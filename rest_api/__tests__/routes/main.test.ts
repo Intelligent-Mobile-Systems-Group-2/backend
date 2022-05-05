@@ -7,35 +7,48 @@ afterEach((done) => {
   done();
 });
 
-describe('POST /user', () => {
-  it('should respond with the lowercased name', async () => {
-    const name = 'William';
-    request(server)
-        .post('/user')
+// Tests for boundary collision
+describe('PUT /boundary-collision', () => {
+  it('should respond with position for x and y', async () => {
+    const positionX = 43;
+    const positionY = 23;
+    const res = await request(server)
+        .put('/boundary-collision')
         .send({
-          name,
+          x: positionX,
+          y: positionY,
         })
-        .expect((res) => {
-          res.body.name = name.toLowerCase();
-        })
-        .expect(200);
+    expect(res.status).toEqual(201);
+    expect(res.body.x).toEqual(positionX);
+    expect(res.body.y).toEqual(positionY);
   });
 });
 
+describe('GET /boundary-collision', () => {
+  it('should respond with a date', async () => {
+    const res = await request(server)
+        .get('/boundary-collision')
+    expect(res.status).toEqual(200);
+  });
+});
 
-describe('POST /image', () => {
-  it('should respond with a label & image', async () => {
-    const imageBase64 = 'base64EncodedImageData';
-    const label = 'It is a rock';
-    request(server)
-        .post('/user')
-        .send({
-          imageBase64,
-        })
-        .expect((res) => {
-          res.body.imageBase64 = imageBase64;
-          res.body.label = label;
-        })
-        .expect(200);
+// Tests for object collision
+describe('PUT /object-collision', () => {
+  it('should respond with a turtle', async () => {
+    const res = await request(server)
+        .put('/object-collision')
+        .attach('photo', './collision-photos/test-image.webp')
+        .attach('x', 43)
+        .attach('y', 22)
+    expect(res.status).toEqual(200);
+    expect(res.body.object).toEqual("Tortoise");
+  });
+});
+
+describe('GET /object-collision', () => {
+  it('should respond with a date', async () => {
+    const res = await request(server)
+        .get('/object-collision')
+    expect(res.status).toEqual(200);
   });
 });
