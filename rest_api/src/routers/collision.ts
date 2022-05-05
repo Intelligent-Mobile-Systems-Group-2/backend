@@ -9,7 +9,7 @@ import config from '../config';
 
 const router = new Router();
 
-router.post('/boundary-collision', async (ctx) => {
+router.put('/boundary-collision', async (ctx) => {
   const x = ctx.request.body.x;
   const y = ctx.request.body.y;
   if (!(x && y)) {
@@ -20,10 +20,10 @@ router.post('/boundary-collision', async (ctx) => {
     x,
     y,
   };
-  ctx.status = 200;
+  ctx.status = 201;
 });
 
-router.post('/object-collision', async (ctx) => {
+router.put('/object-collision', async (ctx) => {
   const x = ctx.request.body.x;
   const y = ctx.request.body.y;
   if (!(x && y)) {
@@ -44,15 +44,11 @@ router.post('/object-collision', async (ctx) => {
     ctx.body = {
       object: objects[0],
     };
-    console.log(ctx.body);
   } else if (error) {
-    ctx.body = {
-      error: error.message,
-    };
-    ctx.status = 500;
+    ctx.throw(500, error.message);
   } else {
-      ctx.body = { 
-        error: "No object could be detected in the image." 
+    ctx.body = {
+      error: "No object could be detected in the image.",
     };
     ctx.status = 200;
   }
@@ -129,10 +125,10 @@ const getObjectsWithinImage = async (imagePath: string): Promise<[any | null, Er
     const image = await Jimp.read(imagePath);
     image.crop(x, y, width, height);
     image.quality(60);
-    image.write(`./collision-photos/${date}-${time}.jpg`);
 
     const [result] = await client.objectLocalization!(imagePath);
     const objectNames = result.localizedObjectAnnotations!.map((object) => object.name);
+    image.write(`./collision-photos/${date}-${time}-${objectNames[0]}.jpg`);
     return [objectNames, null];
   } catch (error) {
     console.error(error);
