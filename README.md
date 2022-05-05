@@ -24,11 +24,11 @@ REST API request documentations for backend communication
 
 `http://ims.matteobernardi.fr/`
 
-## POST request for object collision
+## PUT request for object collision
 
 ### Request
 
-`POST /object-collision/`
+`PUT /object-collision/`
 
 ### Example Body
 
@@ -81,11 +81,11 @@ REST API request documentations for backend communication
     }
 
 
-## POST request for boundary collision
+## PUT request for boundary collision
 
 ### Request
 
-`POST /boundary-collision/`
+`PUT /boundary-collision/`
 
 ### Example Body
 
