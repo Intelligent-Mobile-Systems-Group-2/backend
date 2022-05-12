@@ -151,7 +151,6 @@ const logCollision = async (x: number, y: number, dbFilePath: string, object?: s
   const date = datetime.slice(0, 10);
   const time = datetime.slice(11, datetime.length);
   const positionData = {
-    'date': date,
     'time': time,
     x,
     y,
@@ -159,17 +158,13 @@ const logCollision = async (x: number, y: number, dbFilePath: string, object?: s
   };
 
   const coolisionCoordinates = JSON.parse(fs.readFileSync(dbFilePath, {encoding: 'utf-8'}));
-
-  const jsonARR = [];
-
-  for(let i=0; i<coolisionCoordinates.length; i++){
-    jsonARR.push(coolisionCoordinates[i]);
+  if (!coolisionCoordinates[date as any]) {
+    coolisionCoordinates[date as any] = [];
   }
 
-  jsonARR.push(positionData);
-//   coolisionCoordinates[].push(positionData);
+  coolisionCoordinates[date as any].push(positionData);
 
-  fs.writeFile(dbFilePath, JSON.stringify(jsonARR, null, 2), (err) => {
+  fs.writeFile(dbFilePath, JSON.stringify(coolisionCoordinates, null, 2), (err) => {
     if (err) throw err;
     console.log(`[${date}-${time}] Logged collision on ${x}, ${y}`);
   });
