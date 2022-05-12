@@ -5,7 +5,7 @@ import Koa from 'koa';
 import koaBody from 'koa-body';
 import koaCors from '@koa/cors';
 import Router from '@koa/router';
-import collisionPhotoRouter from './routers/collision';
+import collisionsRouter from './routers/collisions-router';
 import config from './config';
 
 const app = new Koa();
@@ -26,7 +26,7 @@ app.use(koaBody({
   },
 }));
 app.use(router.routes());
-app.use(collisionPhotoRouter.routes());
+app.use(collisionsRouter.routes());
 const server = app
     .listen(config.PORT, async () => {
       console.log(`Listening on port ${config.PORT}`);
