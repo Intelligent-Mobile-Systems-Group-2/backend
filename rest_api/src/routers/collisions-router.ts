@@ -4,7 +4,7 @@
 import Router from '@koa/router';
 import CollisionRepository from '../data-access/collision-repository';
 import {getObjectsWithinImage} from '../business-logic/object-recognition';
-import {ErrorMessage} from '../error-types';
+import MowerApiError from '../mower-api-error';
 
 const router = new Router();
 
@@ -12,9 +12,10 @@ router.put('/boundary-collision', async (ctx) => {
   const x = ctx.request.body.x;
   const y = ctx.request.body.y;
   if (!(x && y)) {
-    ctx.throw(400, {
-      error: ErrorMessage.MISSING_X_OR_Y_FIELD,
-    });
+    ctx.throw(
+        MowerApiError.MISSING_X_OR_Y_FIELD.httpCode,
+        MowerApiError.MISSING_X_OR_Y_FIELD.message,
+        {expose: true});
   }
   try {
     CollisionRepository.instance.logBoundaryCollision(x, y);
@@ -24,9 +25,10 @@ router.put('/boundary-collision', async (ctx) => {
       y,
     };
   } catch (error) {
-    ctx.throw(500, {
-      error: ErrorMessage.LOG_BOUNDARY_COLLISION_FAIL,
-    });
+    ctx.throw(
+        MowerApiError.LOG_BOUNDARY_COLLISION_FAIL.httpCode,
+        MowerApiError.LOG_BOUNDARY_COLLISION_FAIL.message,
+        {expose: true});
   }
 });
 
@@ -35,21 +37,23 @@ router.put('/object-collision', async (ctx) => {
   const y = ctx.request.body.y;
 
   if (!(x && y)) {
-    ctx.throw(400, {
-      error: ErrorMessage.MISSING_X_OR_Y_FIELD,
-    });
+    ctx.throw(
+        MowerApiError.MISSING_X_OR_Y_FIELD.httpCode,
+        MowerApiError.MISSING_X_OR_Y_FIELD.message,
+        {expose: true});
   }
 
   const photo = (ctx.request.files as any).photo;
   if (!photo) {
-    ctx.throw(400, {
-      error: ErrorMessage.MISSING_PHOTO_FIELD,
-    });
+    ctx.throw(
+        MowerApiError.MISSING_PHOTO_FIELD.httpCode,
+        MowerApiError.MISSING_PHOTO_FIELD.message,
+        {expose: true});
   }
 
   // Receive the objects within the image
   const [objects, error] = await getObjectsWithinImage(photo.path);
-  if (objects.length !== 0) {
+  if (objects && objects.length !== 0) {
     const firstObject = objects[0];
 
     try {
@@ -59,14 +63,16 @@ router.put('/object-collision', async (ctx) => {
         object: firstObject,
       };
     } catch (error) {
-      ctx.throw(500, {
-        error: ErrorMessage.LOG_OBJECT_COLLISION_FAIL,
-      });
+      ctx.throw(
+          MowerApiError.LOG_OBJECT_COLLISION_FAIL.message,
+          MowerApiError.LOG_OBJECT_COLLISION_FAIL.httpCode,
+          {expose: true});
     }
   } else if (error) {
-    ctx.throw(500, {
-      error: ErrorMessage.GOOGLE_VISION_FAILED_TO_REACH,
-    });
+    ctx.throw(
+        MowerApiError.GOOGLE_VISION_FAILED_TO_REACH.message,
+        MowerApiError.GOOGLE_VISION_FAILED_TO_REACH.httpCode,
+        {expose: true});
   }
 });
 

@@ -23,7 +23,7 @@ export default class CollisionRepository {
   }
 
   /**
-   *
+   * Getter for the current database instance
    */
   static get instance() {
     if (this._instance == null) {

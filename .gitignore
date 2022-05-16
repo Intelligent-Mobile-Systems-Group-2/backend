@@ -1,7 +1,7 @@
 # db
 rest_api/db/
 rest_api/collision-photos/
-
+rest_api/tmp
 # Logs
 logs
 *.log

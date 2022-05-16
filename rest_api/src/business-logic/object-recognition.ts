@@ -1,6 +1,8 @@
 import GoogleVision from '@google-cloud/vision';
 import Jimp from 'jimp';
 import config from '../config';
+import fs from 'fs';
+import path from 'path';
 
 /* eslint-disable max-len */
 /**
@@ -43,13 +45,19 @@ export const getObjectsWithinImage = async (imagePath: string): Promise<[any | n
     const x = bounds[0][0];
     const y = bounds[0][1];
 
+    // Write cropped image to tmp directory
     const image = await Jimp.read(imagePath);
     image.crop(x, y, width, height);
     image.quality(60);
 
+    const pathToCroppedImage = path.join('/tmp', `${date}-${time}.jpg`);
+    image.write(pathToCroppedImage);
     const [result] = await client.objectLocalization!(imagePath);
     const objectNames = result.localizedObjectAnnotations!.map((object) => object.name);
-    image.write(`./collision-photos/${date}-${time}-${objectNames[0]}.jpg`);
+
+    // Save cropped image with the objectName, and delete the tmp file
+    image.write(path.join('collision-photos', `${date}-${time}-${objectNames[0]}.jpg`));
+    fs.rmSync(pathToCroppedImage);
     return [objectNames, null];
   } catch (error) {
     return [null, error as Error];
