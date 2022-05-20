@@ -37,10 +37,10 @@ export default class CollisionRepository {
    *
    * @param {number} x x coordinate
    * @param {number} y y coordinate
-   * @param {string} objectLabel label of the object collided with
+   * @param {string} object label of the object collided with
    */
-  public async logObjectCollision(x: number, y: number, objectLabel: string) {
-    return CollisionRepository.logCollision(x, y, config.OBJECT_COLLISION_DB_PATH, objectLabel);
+  public async logObjectCollision(x: number, y: number, object: string) {
+    return CollisionRepository.logCollision(x, y, config.OBJECT_COLLISION_DB_PATH, object);
   }
 
   /**
@@ -74,10 +74,10 @@ export default class CollisionRepository {
    * @param {number} x x coordinate of the collision
    * @param {number} y y coordinate of the collision
    * @param {string} dbFilePath the path to the doc database
-   * @param {string} objectLabel optional name of the object collided with
+   * @param {string} object optional name of the object collided with
    * @return {undefined} returns undefined
    */
-  private static async logCollision(x: number, y: number, dbFilePath: string, objectLabel?: string): Promise<boolean> {
+  private static async logCollision(x: number, y: number, dbFilePath: string, object?: string): Promise<boolean> {
     const datetime = new Date().toLocaleString('sv-SE');
     const date = datetime.slice(0, 10);
     const time = datetime.slice(11, datetime.length);
@@ -85,7 +85,7 @@ export default class CollisionRepository {
       'time': time,
       x,
       y,
-      ...(objectLabel && {objectLabel}),
+      ...(object && {object}),
     };
 
     const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
