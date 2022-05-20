@@ -39,6 +39,8 @@ router.put('/boundary-collision', async (ctx) => {
 router.put('/object-collision', async (ctx) => {
   const x = ctx.request.body.x;
   const y = ctx.request.body.y;
+  const objectCollisionLog = await CollisionRepository.instance.getObjectCollisionLog();
+  const date = (new Date().toLocaleString('sv-SE')).slice(0,10);
 
   if (!(x && y) || isNaN(parseInt(x)) || isNaN(parseInt(y))) {
     ctx.throw(
@@ -46,6 +48,13 @@ router.put('/object-collision', async (ctx) => {
         MowerApiError.MISSING_X_OR_Y_FIELD.message,
         {expose: true});
     return;
+  }
+
+  for (let i = 0; i < objectCollisionLog[date].length; i++) { 
+    if (objectCollisionLog[date][i].x == x && objectCollisionLog[date][i].y == y) {
+        console.log('DUPLICATE OBJECT FOUND, ABORTING OPERATION');
+        return;
+    }
   }
 
   const photo = (ctx.request.files as any).photo;
