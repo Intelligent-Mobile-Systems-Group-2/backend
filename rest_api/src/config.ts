@@ -13,6 +13,7 @@ const config = {
   DOCUMENT_DB_PATH: 'db',
   OBJECT_COLLISION_DB_PATH: path.join('db', 'object-collision.json'),
   BOUNDARY_COLLISION_DB_PATH: path.join('db', 'boundary-collision.json'),
+  MOWER_SESSION_TIME_INTERVAL_SECONDS: 300,
 };
 
 export default config;

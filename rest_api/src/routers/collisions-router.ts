@@ -5,17 +5,21 @@ import Router from '@koa/router';
 import CollisionRepository from '../data-access/collision-repository';
 import {getObjectsWithinImage} from '../business-logic/object-recognition';
 import MowerApiError from '../mower-api-error';
+import {Collision} from '../data-access/collision-type';
+import config from '../config';
 
 const router = new Router();
 
 router.put('/boundary-collision', async (ctx) => {
   const x = ctx.request.body.x;
   const y = ctx.request.body.y;
-  if (!(x && y)) {
+
+  if (!(x && y) || isNaN(parseInt(x)) || isNaN(parseInt(y))) {
     ctx.throw(
         MowerApiError.MISSING_X_OR_Y_FIELD.httpCode,
         MowerApiError.MISSING_X_OR_Y_FIELD.message,
         {expose: true});
+    return;
   }
   try {
     CollisionRepository.instance.logBoundaryCollision(x, y);
@@ -36,11 +40,12 @@ router.put('/object-collision', async (ctx) => {
   const x = ctx.request.body.x;
   const y = ctx.request.body.y;
 
-  if (!(x && y)) {
+  if (!(x && y) || isNaN(parseInt(x)) || isNaN(parseInt(y))) {
     ctx.throw(
         MowerApiError.MISSING_X_OR_Y_FIELD.httpCode,
         MowerApiError.MISSING_X_OR_Y_FIELD.message,
         {expose: true});
+    return;
   }
 
   const photo = (ctx.request.files as any).photo;
@@ -49,6 +54,7 @@ router.put('/object-collision', async (ctx) => {
         MowerApiError.MISSING_PHOTO_FIELD.httpCode,
         MowerApiError.MISSING_PHOTO_FIELD.message,
         {expose: true});
+    return;
   }
 
   // Receive the objects within the image
@@ -77,27 +83,65 @@ router.put('/object-collision', async (ctx) => {
 });
 
 router.get('/object-collision', async (ctx) => {
-  const date = ctx.request.query.date as any;
+  const inputtedDate = ctx.request.query.date as string;
+  const inputtedTime = ctx.request.query.time as string;
   const objectCollisionLog = await CollisionRepository.instance.getObjectCollisionLog();
 
   // Return data for all dates if date is unspecified
-  if (!date) {
+  if (!inputtedDate) {
     ctx.body = objectCollisionLog;
-  } else {
-    ctx.body = objectCollisionLog[date];
-  }
+  } else if (inputtedDate && inputtedTime) {
+    const dateCollisions: Array<Collision> = objectCollisionLog[inputtedDate];
+    const timedCollisions: Array<Collision> = [];
+
+    for (let i = 0; i < dateCollisions.length; i++) {
+      const log = dateCollisions[i];
+      const it = inputtedTime.split(':'); // inputted time
+
+      const time = dateCollisions[i].time.split(':'); // db time
+      const inputtedSeconds = (+it[0]) * 60 * 60 + (+it[1]) * 60 + (+it[2]);
+      const seconds = (+time[0]) * 60 * 60 + (+time[1]) * 60 + (+time[2]);
+
+      if (inputtedSeconds >= seconds && (inputtedSeconds - seconds) <= config.MOWER_SESSION_TIME_INTERVAL_SECONDS) {
+        timedCollisions.push(log);
+      }
+    }
+
+    ctx.body = timedCollisions;
+  } else if (inputtedDate) {
+    ctx.body = objectCollisionLog[inputtedDate];
+  };
   ctx.status = 200;
 });
 
 router.get('/boundary-collision', async (ctx) => {
-  const date = ctx.request.query.date as any;
+  const inputtedDate = ctx.request.query.date as string;
+  const inputtedTime = ctx.request.query.time as string;
   const boundaryCollisionLog = await CollisionRepository.instance.getBoundaryCollisionLog();
 
   // Return data for all dates if date is unspecified
-  if (!date) {
+  if (!inputtedDate) {
     ctx.body = boundaryCollisionLog;
+  } else if (inputtedDate && inputtedTime) {
+    const dateCollisions: Array<Collision> = boundaryCollisionLog[inputtedDate];
+    const timedCollisions: Array<Collision> = [];
+
+    for (let i = 0; i < dateCollisions.length; i++) {
+      const log = dateCollisions[i];
+      const it = inputtedTime.split(':'); // inputted time
+
+      const time = dateCollisions[i].time.split(':'); // db time
+      const inputtedSeconds = (+it[0]) * 60 * 60 + (+it[1]) * 60 + (+it[2]);
+      const seconds = (+time[0]) * 60 * 60 + (+time[1]) * 60 + (+time[2]);
+
+      if (inputtedSeconds >= seconds && (inputtedSeconds - seconds) <= config.MOWER_SESSION_TIME_INTERVAL_SECONDS) {
+        timedCollisions.push(log);
+      }
+    }
+
+    ctx.body = timedCollisions;
   } else {
-    ctx.body = boundaryCollisionLog[date];
+    ctx.body = boundaryCollisionLog[inputtedDate];
   }
   ctx.status = 200;
 });

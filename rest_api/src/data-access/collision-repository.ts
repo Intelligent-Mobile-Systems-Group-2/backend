@@ -2,6 +2,7 @@
 /* eslint-disable curly */
 import fs from 'fs';
 import config from '../config';
+import {Collision} from './collision-type';
 
 /**
  * Singleton for making operations on the collision databases
@@ -80,7 +81,7 @@ export default class CollisionRepository {
     const datetime = new Date().toLocaleString('sv-SE');
     const date = datetime.slice(0, 10);
     const time = datetime.slice(11, datetime.length);
-    const positionData = {
+    const collisionData: Collision = {
       'time': time,
       x,
       y,
@@ -94,7 +95,7 @@ export default class CollisionRepository {
           collisionDb[date as any] = [];
         }
 
-        collisionDb[date as any].push(positionData);
+        collisionDb[date as any].push(collisionData);
 
         fs.writeFile(dbFilePath, JSON.stringify(collisionDb, null, 2), (error) => {
           if (error) {
