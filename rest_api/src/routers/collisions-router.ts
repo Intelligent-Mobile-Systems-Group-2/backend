@@ -7,6 +7,7 @@ import {getObjectsWithinImage} from '../business-logic/object-recognition';
 import MowerApiError from '../mower-api-error';
 import {Collision} from '../data-access/collision-type';
 import config from '../config';
+import {getBoundaryCollisionLog, getObjectCollisionLog} from '../business-logic/collisions';
 
 const router = new Router();
 
@@ -40,7 +41,7 @@ router.put('/object-collision', async (ctx) => {
   const x = ctx.request.body.x;
   const y = ctx.request.body.y;
   const objectCollisionLog = await CollisionRepository.instance.getObjectCollisionLog();
-  const date = (new Date().toLocaleString('sv-SE')).slice(0,10);
+  const date = (new Date().toLocaleString('sv-SE')).slice(0, 10);
 
   if (!(x && y) || isNaN(parseInt(x)) || isNaN(parseInt(y))) {
     ctx.throw(
@@ -50,10 +51,10 @@ router.put('/object-collision', async (ctx) => {
     return;
   }
 
-  for (let i = 0; i < objectCollisionLog[date].length; i++) { 
+  for (let i = 0; i < objectCollisionLog[date].length; i++) {
     if (objectCollisionLog[date][i].x == x && objectCollisionLog[date][i].y == y) {
-        console.log('DUPLICATE OBJECT FOUND, ABORTING OPERATION');
-        return;
+      console.log('DUPLICATE OBJECT FOUND, ABORTING OPERATION');
+      return;
     }
   }
 
@@ -94,64 +95,14 @@ router.put('/object-collision', async (ctx) => {
 router.get('/object-collision', async (ctx) => {
   const inputtedDate = ctx.request.query.date as string;
   const inputtedTime = ctx.request.query.time as string;
-  const objectCollisionLog = await CollisionRepository.instance.getObjectCollisionLog();
-
-  // Return data for all dates if date is unspecified
-  if (!inputtedDate) {
-    ctx.body = objectCollisionLog;
-  } else if (inputtedDate && inputtedTime) {
-    const dateCollisions: Array<Collision> = objectCollisionLog[inputtedDate];
-    const timedCollisions: Array<Collision> = [];
-
-    for (let i = 0; i < dateCollisions.length; i++) {
-      const log = dateCollisions[i];
-      const it = inputtedTime.split(':'); // inputted time
-
-      const time = dateCollisions[i].time.split(':'); // db time
-      const inputtedSeconds = (+it[0]) * 60 * 60 + (+it[1]) * 60 + (+it[2]);
-      const seconds = (+time[0]) * 60 * 60 + (+time[1]) * 60 + (+time[2]);
-
-      if (inputtedSeconds >= seconds && (inputtedSeconds - seconds) <= config.MOWER_SESSION_TIME_INTERVAL_SECONDS) {
-        timedCollisions.push(log);
-      }
-    }
-
-    ctx.body = timedCollisions;
-  } else if (inputtedDate) {
-    ctx.body = objectCollisionLog[inputtedDate];
-  };
+  ctx.body = await getBoundaryCollisionLog(inputtedDate, inputtedTime);
   ctx.status = 200;
 });
 
 router.get('/boundary-collision', async (ctx) => {
   const inputtedDate = ctx.request.query.date as string;
   const inputtedTime = ctx.request.query.time as string;
-  const boundaryCollisionLog = await CollisionRepository.instance.getBoundaryCollisionLog();
-
-  // Return data for all dates if date is unspecified
-  if (!inputtedDate) {
-    ctx.body = boundaryCollisionLog;
-  } else if (inputtedDate && inputtedTime) {
-    const dateCollisions: Array<Collision> = boundaryCollisionLog[inputtedDate];
-    const timedCollisions: Array<Collision> = [];
-
-    for (let i = 0; i < dateCollisions.length; i++) {
-      const log = dateCollisions[i];
-      const it = inputtedTime.split(':'); // inputted time
-
-      const time = dateCollisions[i].time.split(':'); // db time
-      const inputtedSeconds = (+it[0]) * 60 * 60 + (+it[1]) * 60 + (+it[2]);
-      const seconds = (+time[0]) * 60 * 60 + (+time[1]) * 60 + (+time[2]);
-
-      if (inputtedSeconds >= seconds && (inputtedSeconds - seconds) <= config.MOWER_SESSION_TIME_INTERVAL_SECONDS) {
-        timedCollisions.push(log);
-      }
-    }
-
-    ctx.body = timedCollisions;
-  } else {
-    ctx.body = boundaryCollisionLog[inputtedDate];
-  }
+  ctx.body = await getObjectCollisionLog(inputtedDate, inputtedTime);
   ctx.status = 200;
 });
 
