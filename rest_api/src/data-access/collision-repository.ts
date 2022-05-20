@@ -39,7 +39,7 @@ export default class CollisionRepository {
    * @param {string} objectLabel label of the object collided with
    */
   public async logObjectCollision(x: number, y: number, objectLabel: string) {
-    return CollisionRepository.logCollision(x, y, config.BOUNDARY_COLLISION_DB_PATH, objectLabel);
+    return CollisionRepository.logCollision(x, y, config.OBJECT_COLLISION_DB_PATH, objectLabel);
   }
 
   /**
