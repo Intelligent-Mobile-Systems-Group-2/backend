@@ -56,8 +56,8 @@ export const getObjectsWithinImage = async (imagePath: string): Promise<[any | n
     const objectNames = result.localizedObjectAnnotations!.map((object) => object.name);
 
     // Save cropped image with the objectName, and delete the tmp file
-    image.write(path.join('/collision-photos', `${date}-${time}-${objectNames[0]}.jpg`));
     fs.rmSync(pathToCroppedImage);
+    image.write(path.join('./collision-photos', `${date}-${time}-${objectNames[0]}.jpg`));
     return [objectNames, null];
   } catch (error) {
     return [null, error as Error];
