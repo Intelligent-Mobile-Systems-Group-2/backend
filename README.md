@@ -35,7 +35,7 @@ REST API request documentations for backend communication
 ### Response
 
     {
-        object: "Dog"
+        "object": "Dog"
     }
 
 Responds with a 201 Created status code.
