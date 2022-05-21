@@ -62,6 +62,7 @@ Responds with a 201 Created status code.
 `GET /object-collision`
  
 ### Response
+```json
 {
     "01-12-2022": [
         {
@@ -73,6 +74,7 @@ Responds with a 201 Created status code.
     ],
     "01-13-2022": [{...}]
 }
+```
 
 ## GET request for boundary collisions 
 
@@ -81,6 +83,7 @@ Responds with a 201 Created status code.
 `GET /boundary-collision`
     
 ### Response
+```json
 {
     "01-12-2022": [
         {
@@ -91,6 +94,7 @@ Responds with a 201 Created status code.
     ],
     "01-13-2022": [{...}]
 }
+```
 
 Notes regarding both GET /boundary-collision and GET /object-collision
 
