@@ -44,7 +44,7 @@ REST API request documentations for backend communication
         object: "Dog"
     }
     
-## GET request for object collisions at specific date 
+## GET request for object collisions at specific date & time
 
 ### Request
 
@@ -53,13 +53,14 @@ REST API request documentations for backend communication
 ### Example Body
 
     {
-        "date": "4/28/2022"
+        "date": "4/28/2022",
+        "time": "14:12:00"
     }
  
 ### Response
 
     {
-        "time": "4:12:48 PM",
+        "time": "14:12:00",
         "x": "43.765",
         "y": "23.845",
         "object": "Dog"
@@ -74,7 +75,7 @@ REST API request documentations for backend communication
 ### Response
 
     {
-        "time": "4:12:48 PM",
+        "time": "14:12:00",
         "x": "43.765",
         "y": "23.845",
         "object": "Dog"
@@ -95,7 +96,7 @@ REST API request documentations for backend communication
     }
     
 
-## GET request for boundary collisions at specific date 
+## GET request for boundary collisions at specific date & time
 
 ### Request
 
@@ -104,7 +105,8 @@ REST API request documentations for backend communication
 ### Example Body
 
     {
-        "date": "4/28/2022"
+       "date": "4/28/2022",
+       "time": "14:12:00"
     }
     
 ### Response
@@ -124,7 +126,7 @@ REST API request documentations for backend communication
 ### Response
 
     {
-        "time": "4:12:48 PM",
+        "time": "4:12:00",
         "x": "43.765",
         "y": "23.845"
     }
