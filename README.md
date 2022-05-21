@@ -33,8 +33,8 @@ REST API request documentations for backend communication
 ### Example Body
 
     {
-        "x": "43.765"
-        "y": "23.845"
+        "x": "43"
+        "y": "23"
         "photo": dogImage.jpg 
     }
 
@@ -53,7 +53,7 @@ REST API request documentations for backend communication
 ### Example Body
 
     {
-        "date": "4/28/2022",
+        "date": "2022-04-10",
         "time": "14:12:00"
     }
  
@@ -61,8 +61,8 @@ REST API request documentations for backend communication
 
     {
         "time": "14:12:00",
-        "x": "43.765",
-        "y": "23.845",
+        "x": "43",
+        "y": "23",
         "object": "Dog"
     }
     
@@ -76,8 +76,8 @@ REST API request documentations for backend communication
 
     {
         "time": "14:12:00",
-        "x": "43.765",
-        "y": "23.845",
+        "x": "43",
+        "y": "23",
         "object": "Dog"
     }
 
@@ -91,8 +91,8 @@ REST API request documentations for backend communication
 ### Example Body
 
     {
-        "x": "43.765"
-        "y": "23.845"
+        "x": "43"
+        "y": "23"
     }
     
 
@@ -105,16 +105,16 @@ REST API request documentations for backend communication
 ### Example Body
 
     {
-       "date": "4/28/2022",
+       "date": "2022-04-10",
        "time": "14:12:00"
     }
     
 ### Response
 
     {
-        "time": "4:12:48 PM",
-        "x": "43.765",
-        "y": "23.845"
+        "time": "4:12:00",
+        "x": "43",
+        "y": "23"
     }
     
 ## GET request for all boundary collisions 
@@ -127,6 +127,6 @@ REST API request documentations for backend communication
 
     {
         "time": "4:12:00",
-        "x": "43.765",
-        "y": "23.845"
+        "x": "43",
+        "y": "23"
     }
